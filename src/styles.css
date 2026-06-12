@@ -191,10 +191,94 @@ h1 {
 .battle-strip,
 .log-panel,
 .result-panel,
-.history-panel {
+.history-panel,
+.guide-panel {
   border: 1px solid rgba(241, 237, 221, 0.12);
   border-radius: 8px;
   background: rgba(27, 28, 21, 0.9);
+}
+
+.guide-panel {
+  padding: 10px 12px;
+  box-shadow: inset 4px 0 0 #3584e4;
+}
+
+.guide-panel summary {
+  color: #cbb86f;
+  font-size: 0.76rem;
+  font-weight: 900;
+  cursor: pointer;
+  list-style: none;
+}
+
+.guide-panel summary::-webkit-details-marker {
+  display: none;
+}
+
+.guide-panel summary::after {
+  content: '▾';
+  float: right;
+  color: #a8a28e;
+}
+
+.guide-panel:not([open]) summary::after {
+  content: '▸';
+}
+
+.guide-body {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+  color: #cbc5ad;
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+.guide-lead,
+.guide-note {
+  margin: 0;
+}
+
+.guide-body strong {
+  color: #f0c45a;
+}
+
+.guide-body h2 {
+  margin: 0 0 4px;
+  color: #e4dcc1;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.guide-body ul,
+.guide-body ol {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+
+.guide-body li + li {
+  margin-top: 2px;
+}
+
+.guide-body dl {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.guide-body dl div {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 6px;
+}
+
+.guide-body dt {
+  color: #f1eddd;
+  font-weight: 800;
+}
+
+.guide-body dd {
+  margin: 0;
 }
 
 .battle-strip {

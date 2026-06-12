@@ -185,6 +185,8 @@ export default function App() {
           <h1>合戦シミュレーション</h1>
         </div>
 
+        <GuidePanel />
+
         <div className="score-grid" aria-label="battle status">
           <FactionPanel
             label="青軍"
@@ -284,6 +286,73 @@ export default function App() {
         {stats.winner && <div className={`victory-banner ${stats.winner}`}>{stats.winner === 'blue' ? '青軍勝利' : '赤軍勝利'}</div>}
       </section>
     </main>
+  );
+}
+
+function GuidePanel() {
+  return (
+    <details className="guide-panel" open>
+      <summary>勝ち方ガイド</summary>
+      <div className="guide-body">
+        <p className="guide-lead">HPではなく<strong>士気</strong>を崩して、敵を潰走させる合戦です。操作できるのは青軍だけです。</p>
+
+        <section>
+          <h2>勝ち条件</h2>
+          <ul>
+            <li>赤軍の戦闘中兵士が <strong>6人以下</strong></li>
+            <li>赤軍武将を討ち、残兵が <strong>18人以下</strong></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>おすすめ手順</h2>
+          <ol>
+            <li>横陣 + 前進で接敵</li>
+            <li>「青優勢」「中央突破」が出たら突撃</li>
+            <li>潰走が増えたら鼓舞</li>
+            <li>敵将が前に出たら敵将狙い</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>号令</h2>
+          <dl>
+            <div>
+              <dt>前進</dt>
+              <dd>標準。前線を押す</dd>
+            </div>
+            <div>
+              <dt>防衛</dt>
+              <dd>前線維持。士気回復</dd>
+            </div>
+            <div>
+              <dt>突撃</dt>
+              <dd>約6秒。有利なときに一気に押す</dd>
+            </div>
+            <div>
+              <dt>敵将</dt>
+              <dd>敵武将を狙う</dd>
+            </div>
+            <div>
+              <dt>鼓舞</dt>
+              <dd>約5秒。潰走兵を呼び戻す</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section>
+          <h2>陣形・相性</h2>
+          <ul>
+            <li>横陣 … 安定。槍が強い</li>
+            <li>魚鱗 … 中央突破向き</li>
+            <li>鶴翼 … 翼・包囲向き</li>
+            <li>槍 → 騎、騎 → 側面・歩</li>
+          </ul>
+        </section>
+
+        <p className="guide-note">上部の「士気」「潰走」が勝敗の目安です。</p>
+      </div>
+    </details>
   );
 }
 
