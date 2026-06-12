@@ -1,0 +1,336 @@
+:root {
+  color-scheme: dark;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: #10110d;
+  color: #f1eddd;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 1024px;
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(21, 23, 16, 0.96), rgba(10, 11, 9, 0.98)),
+    #10110d;
+}
+
+button {
+  border: 1px solid rgba(240, 196, 90, 0.24);
+  border-radius: 6px;
+  background: #23261a;
+  color: #f1eddd;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    transform 140ms ease;
+}
+
+button:hover {
+  background: #303423;
+  border-color: rgba(240, 196, 90, 0.62);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 330px minmax(680px, 1fr);
+  gap: 18px;
+  min-height: 100vh;
+  padding: 18px;
+}
+
+.hud {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.brand-block {
+  padding: 14px 0 4px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: #cbb86f;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.72rem, 2.4vw, 2.45rem);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.score-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.faction-panel {
+  border: 1px solid rgba(241, 237, 221, 0.12);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(27, 28, 21, 0.9);
+}
+
+.faction-panel header,
+.faction-panel footer,
+.battle-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.unit-counts {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  color: #a8a28e;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.faction-panel header span {
+  font-weight: 800;
+}
+
+.faction-panel header strong {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.faction-panel footer {
+  margin-top: 9px;
+  color: #cbc5ad;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.faction-panel.blue {
+  box-shadow: inset 4px 0 0 #3584e4;
+}
+
+.faction-panel.red {
+  box-shadow: inset 4px 0 0 #d84f45;
+}
+
+.meter {
+  overflow: hidden;
+  height: 7px;
+  margin-top: 12px;
+  border-radius: 999px;
+  background: rgba(241, 237, 221, 0.12);
+}
+
+.meter div {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #d95345, #f0c45a 48%, #49b6a2);
+}
+
+.command-row,
+.formation-row,
+.time-row {
+  display: grid;
+  gap: 8px;
+}
+
+.command-row {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.formation-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.time-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.command-row button,
+.formation-row button,
+.time-row button {
+  min-height: 42px;
+  padding: 0 8px;
+}
+
+.command-row button.active,
+.formation-row button.active,
+.time-row button.active {
+  background: #f0c45a;
+  border-color: #f0c45a;
+  color: #17140c;
+}
+
+.command-row button.ghost {
+  background: transparent;
+}
+
+.battle-strip,
+.log-panel,
+.result-panel,
+.history-panel {
+  border: 1px solid rgba(241, 237, 221, 0.12);
+  border-radius: 8px;
+  background: rgba(27, 28, 21, 0.9);
+}
+
+.battle-strip {
+  flex-wrap: wrap;
+  min-height: 46px;
+  padding: 0 12px;
+  color: #cbc5ad;
+  row-gap: 4px;
+  font-size: 0.88rem;
+}
+
+.battle-strip strong {
+  color: #f1eddd;
+}
+
+.log-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 150px;
+  padding: 12px;
+  color: #e4dcc1;
+  font-size: 0.92rem;
+}
+
+.result-panel,
+.history-panel {
+  padding: 12px;
+}
+
+.result-panel header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.result-panel header span,
+.history-panel header {
+  color: #cbb86f;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.result-panel header strong {
+  font-size: 1.15rem;
+}
+
+.result-panel.blue {
+  box-shadow: inset 4px 0 0 #3584e4;
+}
+
+.result-panel.red {
+  box-shadow: inset 4px 0 0 #d84f45;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  color: #e4dcc1;
+  font-size: 0.84rem;
+}
+
+.result-events {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.result-events span {
+  border: 1px solid rgba(240, 196, 90, 0.22);
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: #f0c45a;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.history-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.history-row {
+  display: grid;
+  grid-template-columns: 44px 42px minmax(0, 1fr);
+  gap: 8px;
+  color: #cbc5ad;
+  font-size: 0.78rem;
+}
+
+.history-row strong {
+  color: #f1eddd;
+}
+
+.battle-stage {
+  position: relative;
+  display: grid;
+  min-height: calc(100vh - 36px);
+  border: 1px solid rgba(241, 237, 221, 0.12);
+  border-radius: 8px;
+  background: #090a08;
+}
+
+.game-root {
+  width: 100%;
+  min-height: calc(100vh - 38px);
+}
+
+.game-root canvas {
+  display: block;
+}
+
+.victory-banner {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 240px;
+  border: 1px solid rgba(241, 237, 221, 0.28);
+  border-radius: 8px;
+  padding: 12px 24px;
+  background: rgba(15, 16, 12, 0.88);
+  color: #f6e6a8;
+  font-size: 1.35rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.victory-banner.blue {
+  box-shadow: inset 0 -4px 0 #3584e4;
+}
+
+.victory-banner.red {
+  box-shadow: inset 0 -4px 0 #d84f45;
+}
