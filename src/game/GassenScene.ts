@@ -134,7 +134,8 @@ export class GassenScene extends Phaser.Scene {
       }
 
       this.playerCommand = command;
-      this.playerCommandUntil = this.elapsed + (command === 'charge' ? 6 : command === 'rally' ? 5 : 9999);
+      const duration = command === 'charge' ? 7 : command === 'rally' ? 6.5 : 9999;
+      this.playerCommandUntil = this.elapsed + duration;
       this.addLog(this.commandLabel(command));
     };
 
@@ -337,14 +338,14 @@ export class GassenScene extends Phaser.Scene {
     const commanderGap = Math.abs(redCommander.x - blueCommander.x);
     const redStats = this.factionStats('red');
     const redMoraleLow = redStats.avgMorale < 48 || redStats.routing >= 6;
-    const blueCommanderIsVulnerable = this.commanderIsolationScore('blue') > 0.58;
+    const blueCommanderIsVulnerable = this.commanderIsolationScore('blue') > 0.68;
 
     if (redMoraleLow && this.elapsed > this.redRallyUntil) {
       this.redRallyUntil = this.elapsed + 5.2;
       this.addLog('赤軍 鼓舞');
     }
 
-    if (blueCommanderIsVulnerable && redActive > 15 && this.elapsed > this.redTargetCommanderUntil) {
+    if (blueCommanderIsVulnerable && redActive > 18 && this.elapsed > this.redTargetCommanderUntil) {
       this.redTargetCommanderUntil = this.elapsed + 6.2;
       this.addLog('赤軍 敵将狙い');
     }
@@ -357,7 +358,7 @@ export class GassenScene extends Phaser.Scene {
       this.setRedFormation('wedge');
     }
 
-    if (redActive > 18 && (blueActive < redActive - 9 || commanderGap < 250 || this.elapsed > 28)) {
+    if (redActive > 20 && (blueActive < redActive - 11 || commanderGap < 230 || this.elapsed > 42)) {
       const wasCharging = this.elapsed < this.redChargeUntil;
       this.redChargeUntil = Math.max(this.redChargeUntil, this.elapsed + 4.5);
       if (!wasCharging) {
@@ -421,9 +422,14 @@ export class GassenScene extends Phaser.Scene {
         const distance = Phaser.Math.Distance.Between(commander.x, commander.y, unit.x, unit.y);
         if (unit.faction === commander.faction && distance < friendlyRadius) {
           const aura = 1 - distance / friendlyRadius;
-          const rallyBoost = command === 'rally' ? 1.65 : 1;
-          unit.commandBuff = Math.max(unit.commandBuff, 0.18 + aura * (command === 'rally' ? 0.16 : 0.24));
-          unit.morale = Math.min(unit.maxMorale + 16, unit.morale + dt * (3.2 + aura * 5) * rallyBoost);
+          const isPlayer = commander.faction === 'blue';
+          const rallyBoost = command === 'rally' ? (isPlayer ? 1.85 : 1.65) : 1;
+          const playerBoost = isPlayer ? 1.12 : 1;
+          unit.commandBuff = Math.max(unit.commandBuff, 0.18 + aura * (command === 'rally' ? 0.16 : 0.24) * playerBoost);
+          unit.morale = Math.min(
+            unit.maxMorale + 16,
+            unit.morale + dt * (3.2 + aura * 5) * rallyBoost * playerBoost,
+          );
           if (command === 'rally') {
             unit.collapseShock = Math.max(0, unit.collapseShock - dt * (10 + aura * 18));
             unit.flankThreat = Math.max(0, unit.flankThreat - dt * (0.7 + aura));
@@ -1027,7 +1033,7 @@ export class GassenScene extends Phaser.Scene {
       return;
     }
 
-    if (redActive <= 6 || (!this.commanderAlive.red && redActive <= 18)) {
+    if (redActive <= 8 || (!this.commanderAlive.red && redActive <= 20)) {
       this.finishBattle('blue', this.commanderAlive.red ? '赤軍 戦線崩壊' : '赤軍 武将討死');
     }
   }

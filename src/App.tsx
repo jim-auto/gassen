@@ -12,6 +12,11 @@ import {
   TIME_SCALE_EVENT,
   TimeScale,
 } from './game/events';
+import {
+  getBattleAdvice,
+  redCollapseProgress,
+  redVictoryThreshold,
+} from './battleAdvice';
 
 const HISTORY_KEY = 'gassen:battle-history';
 
@@ -176,6 +181,30 @@ export default function App() {
 
   const incidentLabel = stats.incidents[0]?.label ?? '戦局安定';
   const timeLabel = stats.timeScale === 0 ? '停止' : `${stats.timeScale}x`;
+  const advice = useMemo(() => getBattleAdvice(stats), [stats]);
+
+  const commandClass = (command: BattleCommand) => {
+    const classes = [];
+    if (stats.command === command) classes.push('active');
+    if (advice.command === command && stats.command !== command && !stats.winner) classes.push('suggested');
+    return classes.join(' ');
+  };
+
+  const formationClass = (formation: BattleFormation) => {
+    const classes = [];
+    if (stats.formations.blue === formation) classes.push('active');
+    if (advice.formation === formation && stats.formations.blue !== formation && !stats.winner) classes.push('suggested');
+    return classes.join(' ');
+  };
+
+  const applyAdvice = () => {
+    if (!advice.command || advice.command === 'reset') {
+      sendCommand('reset');
+      return;
+    }
+    sendCommand(advice.command);
+    if (advice.formation) sendFormation(advice.formation);
+  };
 
   return (
     <main className="app-shell">
@@ -186,6 +215,8 @@ export default function App() {
         </div>
 
         <GuidePanel />
+
+        <ActionAdvisor stats={stats} advice={advice} onApply={applyAdvice} />
 
         <div className="score-grid" aria-label="battle status">
           <FactionPanel
@@ -213,22 +244,19 @@ export default function App() {
         </div>
 
         <div className="command-row" aria-label="commands">
-          <button className={stats.command === 'advance' ? 'active' : ''} onClick={() => sendCommand('advance')}>
+          <button className={commandClass('advance')} onClick={() => sendCommand('advance')}>
             前進
           </button>
-          <button className={stats.command === 'hold' ? 'active' : ''} onClick={() => sendCommand('hold')}>
+          <button className={commandClass('hold')} onClick={() => sendCommand('hold')}>
             防衛
           </button>
-          <button className={stats.command === 'charge' ? 'active' : ''} onClick={() => sendCommand('charge')}>
+          <button className={commandClass('charge')} onClick={() => sendCommand('charge')}>
             突撃
           </button>
-          <button
-            className={stats.command === 'target_commander' ? 'active' : ''}
-            onClick={() => sendCommand('target_commander')}
-          >
+          <button className={commandClass('target_commander')} onClick={() => sendCommand('target_commander')}>
             敵将
           </button>
-          <button className={stats.command === 'rally' ? 'active' : ''} onClick={() => sendCommand('rally')}>
+          <button className={commandClass('rally')} onClick={() => sendCommand('rally')}>
             鼓舞
           </button>
           <button className="ghost" onClick={() => sendCommand('reset')}>
@@ -237,13 +265,13 @@ export default function App() {
         </div>
 
         <div className="formation-row" aria-label="formations">
-          <button className={stats.formations.blue === 'line' ? 'active' : ''} onClick={() => sendFormation('line')}>
+          <button className={formationClass('line')} onClick={() => sendFormation('line')}>
             横陣
           </button>
-          <button className={stats.formations.blue === 'wedge' ? 'active' : ''} onClick={() => sendFormation('wedge')}>
+          <button className={formationClass('wedge')} onClick={() => sendFormation('wedge')}>
             魚鱗
           </button>
-          <button className={stats.formations.blue === 'crane' ? 'active' : ''} onClick={() => sendFormation('crane')}>
+          <button className={formationClass('crane')} onClick={() => sendFormation('crane')}>
             鶴翼
           </button>
         </div>
@@ -289,18 +317,60 @@ export default function App() {
   );
 }
 
+function ActionAdvisor({
+  stats,
+  advice,
+  onApply,
+}: {
+  stats: BattleStats;
+  advice: ReturnType<typeof getBattleAdvice>;
+  onApply: () => void;
+}) {
+  const redThreshold = redVictoryThreshold(stats.red.commanderAlive);
+  const collapseProgress = redCollapseProgress(stats.red.active, stats.red.commanderAlive);
+  const redRemaining = Math.max(0, stats.red.active - redThreshold);
+
+  return (
+    <article className={`action-advisor ${advice.urgency}`} aria-label="next action">
+      <header>
+        <span>次の一手</span>
+        {!stats.winner && (
+          <span className="collapse-label">
+            敵崩壊まで あと {redRemaining} 人
+          </span>
+        )}
+      </header>
+
+      {!stats.winner && (
+        <div className="collapse-meter" aria-label="enemy collapse progress">
+          <div style={{ width: `${collapseProgress}%` }} />
+        </div>
+      )}
+
+      <strong>{advice.headline}</strong>
+      <p>{advice.detail}</p>
+
+      {advice.command && (
+        <button className="advisor-cta" onClick={onApply}>
+          {advice.ctaLabel}
+        </button>
+      )}
+    </article>
+  );
+}
+
 function GuidePanel() {
   return (
-    <details className="guide-panel" open>
+    <details className="guide-panel">
       <summary>勝ち方ガイド</summary>
       <div className="guide-body">
-        <p className="guide-lead">HPではなく<strong>士気</strong>を崩して、敵を潰走させる合戦です。操作できるのは青軍だけです。</p>
+        <p className="guide-lead">HPではなく<strong>士気</strong>を崩して、敵を潰走させる合戦です。上の「次の一手」ボタンに従うだけでも勝てます。</p>
 
         <section>
           <h2>勝ち条件</h2>
           <ul>
-            <li>赤軍の戦闘中兵士が <strong>6人以下</strong></li>
-            <li>赤軍武将を討ち、残兵が <strong>18人以下</strong></li>
+            <li>赤軍の戦闘中兵士が <strong>8人以下</strong></li>
+            <li>赤軍武将を討ち、残兵が <strong>20人以下</strong></li>
           </ul>
         </section>
 
